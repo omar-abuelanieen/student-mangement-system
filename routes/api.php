@@ -10,6 +10,8 @@ use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\StudentController;
 use App\Http\Controllers\Api\TeacherController;
 use App\Http\Controllers\Api\ScheduleEntryController;
+use App\Http\Controllers\Api\TeacherScheduleController;
+
 
 Route::post('users', [UserController::class, 'store']);
 
@@ -68,3 +70,5 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/schedule-entries/{scheduleEntry}', [ScheduleEntryController::class, 'update']);
     Route::delete('/schedule-entries/{scheduleEntry}', [ScheduleEntryController::class, 'destroy']);
 });
+
+Route::get('teachers/{teacher}/schedule', TeacherScheduleController::class);

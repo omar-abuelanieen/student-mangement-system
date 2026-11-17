@@ -13,13 +13,13 @@ class TeacherResource extends JsonResource
      * @return array<string, mixed>
      */
     public function toArray(Request $request): array
-    {
-        return [
-            'id'        => $this->id,
-            'full_name' => $this->user->full_name,
-            'email'     => $this->user->email,
-            'classroom' => $this->classroom ? new ClassroomResource($this->classroom) : null,
-            'subjects'  => SubjectResource::collection($this->whenLoaded('subjects')),
-        ];
-    }
+{
+    return [
+        'id'        => $this->id,
+        'full_name' => $this->user->full_name,
+        'email'     => $this->user->email,
+        'subjects'  => SubjectResource::collection($this->whenLoaded('subjects')),
+    ];
 }
+    }
+
