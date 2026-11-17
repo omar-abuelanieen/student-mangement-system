@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\SubjectController;
 use App\Http\Controllers\Api\ClassroomController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\StudentController;
+use App\Http\Controllers\Api\TeacherController;
 
 Route::post('users', [UserController::class, 'store']);
 
@@ -50,4 +51,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/students/{student}', [StudentController::class, 'update']);
     Route::delete('/students/{student}', [StudentController::class, 'destroy']);
     Route::post('/students/{student}/classrooms', [StudentController::class, 'assignClassroom']);
+});
+ Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/teachers', [TeacherController::class, 'index']);
+    Route::post('/teachers', [TeacherController::class, 'store']);
+    Route::get('/teachers/{teacher}', [TeacherController::class, 'show']);
+    Route::put('/teachers/{teacher}', [TeacherController::class, 'update']);
+    Route::delete('/teachers/{teacher}', [TeacherController::class, 'destroy']);
+    Route::put('/teachers/{teacher}/subjects', [TeacherController::class, 'syncSubjects']);
 });
