@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\ClassroomController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\StudentController;
 use App\Http\Controllers\Api\TeacherController;
+use App\Http\Controllers\Api\ScheduleEntryController;
 
 Route::post('users', [UserController::class, 'store']);
 
@@ -59,4 +60,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/teachers/{teacher}', [TeacherController::class, 'update']);
     Route::delete('/teachers/{teacher}', [TeacherController::class, 'destroy']);
     Route::put('/teachers/{teacher}/subjects', [TeacherController::class, 'syncSubjects']);
+});
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/schedule-entries', [ScheduleEntryController::class, 'index']);
+    Route::post('/schedule-entries', [ScheduleEntryController::class, 'store']);
+    Route::get('/schedule-entries/{scheduleEntry}', [ScheduleEntryController::class, 'show']);
+    Route::put('/schedule-entries/{scheduleEntry}', [ScheduleEntryController::class, 'update']);
+    Route::delete('/schedule-entries/{scheduleEntry}', [ScheduleEntryController::class, 'destroy']);
 });

@@ -31,4 +31,8 @@ class Classroom extends Model
     {
         return $this->hasMany(TeacherProfile::class);
     }
+    public function scheduleEntries()
+    {
+        return $this->hasMany(ScheduleEntry::class);
+    }
 }
