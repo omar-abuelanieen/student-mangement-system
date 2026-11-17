@@ -13,20 +13,13 @@ class AuthService
 {
     public function register(array $data): array
     {
-        return DB::transaction(function () use ($data) {
-            $role = RoleEnum::from($data['role']);
+        $userData = $data;
+        $userData['password'] = Hash::make($data['password']);
+        $userData['role'] = RoleEnum::from($data['role'])->value;
 
-            $user = User::create(Arr::except($data, ['role']));
-            $user->assignRole($role->value);
+        $user = User::create($userData);
 
-            match ($role) {
-                RoleEnum::Student  => $user->studentProfile()->create(),
-                RoleEnum::Guardian => $user->guardianProfile()->create(),
-                default            => null,
-            };
-
-            return [$user, $user->createToken('api')->plainTextToken];
-        });
+        return [$user, $user->createToken('api')->plainTextToken];
     }
 
     public function login(array $credentials): array

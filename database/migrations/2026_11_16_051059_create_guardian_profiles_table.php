@@ -14,6 +14,7 @@ return new class extends Migration
        Schema::create('guardian_profiles', function (Blueprint $table) {
     $table->id();
     $table->foreignId('user_id')->unique()->constrained()->cascadeOnDelete();
+    $table->foreignId('student_profile_id')->nullable()->constrained()->nullOnDelete();
     $table->timestamps();
     $table->softDeletes();
 });

@@ -6,7 +6,10 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\LevelController;
 use App\Http\Controllers\Api\SubjectController;
 use App\Http\Controllers\Api\ClassroomController;
+use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\Api\StudentController;
 
+Route::post('users', [UserController::class, 'store']);
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
@@ -38,4 +41,13 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/classrooms/{classroom}', [ClassroomController::class, 'show']);
     Route::put('/classrooms/{classroom}', [ClassroomController::class, 'update']);
     Route::delete('/classrooms/{classroom}', [ClassroomController::class, 'destroy']);
+});
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/students', [StudentController::class, 'index']);
+    Route::post('/students', [StudentController::class, 'store']);
+    Route::get('/students/{student}', [StudentController::class, 'show']);
+    Route::put('/students/{student}', [StudentController::class, 'update']);
+    Route::delete('/students/{student}', [StudentController::class, 'destroy']);
+    Route::post('/students/{student}/classrooms', [StudentController::class, 'assignClassroom']);
 });
