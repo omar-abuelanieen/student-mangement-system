@@ -4,12 +4,15 @@ namespace App\Http\Requests\Schedule;
 
 use App\Enums\DayOfWeekEnum;
 use App\Models\ScheduleEntry;
+use App\Rules\NoScheduleOverlap;
 use App\Rules\TeacherTeachesSubject;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
 class UpdateScheduleEntryRequest extends FormRequest
 {
+    private ?ScheduleEntry $currentEntry = null;
+
     public function authorize(): bool
     {
         return true;
@@ -22,6 +25,8 @@ class UpdateScheduleEntryRequest extends FormRequest
         if (! $entry instanceof ScheduleEntry) {
             $entry = ScheduleEntry::findOrFail($entry);
         }
+
+        $this->currentEntry = $entry;
 
         $this->mergeIfMissing([
             'classroom_id'       => $entry->classroom_id,
@@ -45,7 +50,10 @@ class UpdateScheduleEntryRequest extends FormRequest
             ],
             'day'                => ['required', Rule::enum(DayOfWeekEnum::class)->only(DayOfWeekEnum::schoolDays())],
             'start_time'         => ['required', 'date_format:H:i'],
-            'end_time'           => ['required', 'date_format:H:i', 'after:start_time'],
+            'end_time'           => [
+                'bail', 'required', 'date_format:H:i', 'after:start_time',
+                new NoScheduleOverlap($this->currentEntry?->id),
+            ],
         ];
     }
 }
