@@ -16,4 +16,8 @@ class Subject extends Model
     {
         return $this->belongsToMany(TeacherProfile::class, 'subject_teacher_profile')->withTimestamps();
     }
+    public function scheduleEntries()
+    {
+        return $this->hasMany(ScheduleEntry::class);
+    }
 }
