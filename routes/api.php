@@ -11,6 +11,8 @@ use App\Http\Controllers\Api\StudentController;
 use App\Http\Controllers\Api\TeacherController;
 use App\Http\Controllers\Api\ScheduleEntryController;
 use App\Http\Controllers\Api\TeacherScheduleController;
+use App\Http\Controllers\Api\ClassroomScheduleController;
+use App\Http\Controllers\Api\SchoolCalendarDayController;
 
 
 Route::post('users', [UserController::class, 'store']);
@@ -72,3 +74,16 @@ Route::middleware('auth:sanctum')->group(function () {
 });
 
 Route::get('teachers/{teacher}/schedule', TeacherScheduleController::class);
+
+Route::get('classrooms/{classroom}/schedule', ClassroomScheduleController::class);
+
+
+
+Route::middleware('auth:sanctum')->group(function() {
+    Route::get('/calendar', [SchoolCalendarDayController::class, 'index']);
+    Route::post('/calendar', [SchoolCalendarDayController::class, 'store']);
+    Route::get('/calendar/{calendarDay}', [SchoolCalendarDayController::class, 'show']);
+    Route::put('/calendar/{calendarDay}', [SchoolCalendarDayController::class, 'update']);
+    Route::delete('/calendar/{calendarDay}', [SchoolCalendarDayController::class, 'destroy']);
+
+});

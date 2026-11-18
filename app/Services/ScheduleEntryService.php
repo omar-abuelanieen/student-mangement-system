@@ -3,15 +3,17 @@
 namespace App\Services;
 
 use App\Enums\DayOfWeekEnum;
+use App\Models\Classroom;
 use App\Models\ScheduleEntry;
 use App\Models\TeacherProfile;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 
 class ScheduleEntryService
 {
     private const RELATIONS = ['classroom.level', 'subject', 'teacher.user'];
-    private const TEACHER_SCHEDULE_TTL = 3600; 
+    private const TEACHER_SCHEDULE_TTL = 3600;
 
     public function list(int $perPage = 15): LengthAwarePaginator
     {
@@ -60,6 +62,21 @@ class ScheduleEntryService
                 ->get()
         );
 
+        return $this->groupByDay($entries);
+    }
+
+    public function classroomSchedule(Classroom $classroom): array
+    {
+        $entries = ScheduleEntry::with('subject', 'teacher.user')
+            ->where('classroom_id', $classroom->id)
+            ->orderBy('start_time')
+            ->get();
+
+        return $this->groupByDay($entries);
+    }
+
+    private function groupByDay(Collection $entries): array
+    {
         $byDay = $entries->groupBy(fn (ScheduleEntry $entry) => $entry->day->value);
 
         return collect(DayOfWeekEnum::schoolDays())
