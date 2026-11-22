@@ -18,6 +18,7 @@ return new class extends Migration
     $table->decimal('score', 6, 2)->nullable();
     $table->timestamp('submitted_at')->nullable();
     $table->timestamp('graded_at')->nullable();
+    $table->string('status')->default('submitted');
     $table->unique(['exam_id', 'student_profile_id']);
     $table->timestamps();
 });

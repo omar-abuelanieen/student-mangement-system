@@ -17,8 +17,8 @@ return new class extends Migration
     $table->foreignId('classroom_id')->constrained()->cascadeOnDelete();
     $table->foreignId('marked_by')->constrained('teacher_profiles')->cascadeOnDelete();
     $table->date('date');
-    $table->string('status');         
-    $table->timestamp('marked_at')->useCurrent();
+    $table->string('status');
+    $table->timestamp('marked_at',3)->useCurrent();
     $table->unique(['student_profile_id', 'date']);
     $table->timestamps();
 });

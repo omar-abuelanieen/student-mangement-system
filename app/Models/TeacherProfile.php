@@ -32,4 +32,9 @@ public function scheduleEntries()
 {
     return $this->hasMany(ScheduleEntry::class);
 }
+public function attendances()
+{
+    return $this->hasMany(Attendance::class, 'marked_by');
+
+}
 }

@@ -13,6 +13,8 @@ use App\Http\Controllers\Api\ScheduleEntryController;
 use App\Http\Controllers\Api\TeacherScheduleController;
 use App\Http\Controllers\Api\ClassroomScheduleController;
 use App\Http\Controllers\Api\SchoolCalendarDayController;
+use App\Http\Controllers\Api\AttendanceController;
+use App\Http\Controllers\Api\ExamController;
 
 
 Route::post('users', [UserController::class, 'store']);
@@ -56,6 +58,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/students/{student}', [StudentController::class, 'update']);
     Route::delete('/students/{student}', [StudentController::class, 'destroy']);
     Route::post('/students/{student}/classrooms', [StudentController::class, 'assignClassroom']);
+    Route::put('/students/{student}/classrooms', [StudentController::class, 'updateClassroom']);
 });
  Route::middleware('auth:sanctum')->group(function () {
     Route::get('/teachers', [TeacherController::class, 'index']);
@@ -86,4 +89,22 @@ Route::middleware('auth:sanctum')->group(function() {
     Route::put('/calendar/{calendarDay}', [SchoolCalendarDayController::class, 'update']);
     Route::delete('/calendar/{calendarDay}', [SchoolCalendarDayController::class, 'destroy']);
 
+});
+Route::middleware('auth:sanctum')->group(function() {
+    Route::get('/attendances', [AttendanceController::class, 'index']);
+    Route::post('/attendances', [AttendanceController::class, 'store']);
+    Route::get('/attendances/{attendance}', [AttendanceController::class, 'show']);
+    Route::put('/attendances/{attendance}', [AttendanceController::class, 'update']);
+    Route::delete('/attendances/{attendance}', [AttendanceController::class, 'destroy']);
+});
+
+Route::middleware(['auth:sanctum', 'role:teacher'])->group(function () {
+    Route::post('exams', [ExamController::class, 'store']);
+    Route::put('exams/{exam}', [ExamController::class, 'update']);
+    Route::delete('exams/{exam}', [ExamController::class, 'destroy']);
+});
+
+Route::middleware(['auth:sanctum', 'role:teacher|student|admin|manager'])->group(function () {
+    Route::get('exams', [ExamController::class, 'index']);
+    Route::get('exams/{exam}', [ExamController::class, 'show']);
 });

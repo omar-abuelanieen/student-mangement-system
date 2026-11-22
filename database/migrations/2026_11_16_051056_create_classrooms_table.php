@@ -16,7 +16,8 @@ return new class extends Migration
     $table->foreignId('level_id')->constrained()->cascadeOnDelete();
     $table->integer('section');
     $table->string('custom_name')->nullable();
-    $table->unsignedInteger('capacity')->default(30);
+    $table->unsignedInteger('capacity')->max(30);
+    $table->integer('students_count')->default(0);
     $table->unique(['level_id', 'section']);
     $table->timestamps();
     $table->softDeletes();

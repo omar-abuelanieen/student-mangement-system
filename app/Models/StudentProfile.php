@@ -15,6 +15,7 @@ class StudentProfile extends Model
         'email',
         'phone',
         'address',
+        'classroom_id',
     ];
     public function user()
     {
@@ -23,5 +24,13 @@ class StudentProfile extends Model
     public function classroom()
     {
         return $this->belongsTo(Classroom::class);
+    }
+    public function attendances()
+    {
+        return $this->hasMany(Attendance::class);
+    }
+    public function submissions()
+    {
+        return $this->hasMany(ExamSubmission::class);
     }
 }

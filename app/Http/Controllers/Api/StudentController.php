@@ -52,4 +52,10 @@ class StudentController extends Controller
 
         return $this->success(new StudentResource($student), 'Student assigned to classroom');
     }
+    public function updateClassroom(AssignClassroomRequest $request, StudentProfile $student): JsonResponse
+    {
+        $student = $this->students->assignToClassroom($student, $request->validated('classroom_id'));
+
+        return $this->success(new StudentResource($student), 'Student classroom updated');
+    }
 }

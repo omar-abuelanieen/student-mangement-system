@@ -4,8 +4,11 @@ namespace App\Services;
 
 use App\Enums\RoleEnum;
 use App\Models\StudentProfile;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
+use App\Models\Classroom;
 
 class StudentService
 {
@@ -40,10 +43,48 @@ class StudentService
         });
     }
 
-    public function assignToClassroom(StudentProfile $student, int $classroomId): StudentProfile
-    {
-        $student->update(['classroom_id' => $classroomId]);
 
-        return $student->load('user', 'classroom.level');
-    }
+
+public function assignToClassroom(StudentProfile $student, int $classroomId): StudentProfile
+{
+    return DB::transaction(function () use ($student, $classroomId) {
+
+        $lockedStudent = StudentProfile::whereKey($student->id)
+            ->lockForUpdate()
+            ->firstOrFail();
+
+        $oldClassroomId = $lockedStudent->classroom_id;
+
+        if ((int) $oldClassroomId === $classroomId) {
+            return $lockedStudent->load('user', 'classroom.level');
+        }
+
+        $classrooms = Classroom::whereIn('id', array_filter([$oldClassroomId, $classroomId]))
+            ->orderBy('id')
+            ->lockForUpdate()
+            ->get()
+            ->keyBy('id');
+
+        $newClassroom = $classrooms->get($classroomId);
+
+        if (! $newClassroom) {
+            throw (new ModelNotFoundException)->setModel(Classroom::class, [$classroomId]);
+        }
+
+        if ($newClassroom->students_count >= $newClassroom->capacity) {
+            throw ValidationException::withMessages([
+            'classroom_id' => ['This classroom is full.'],]);
+        }
+
+        $lockedStudent->update(['classroom_id' => $classroomId]);
+
+        $newClassroom->increment('students_count');
+
+        if ($oldClassroomId) {
+            $classrooms->get($oldClassroomId)?->decrement('students_count');
+        }
+
+        return $lockedStudent->load('user', 'classroom.level');
+    });
+}
 }

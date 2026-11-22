@@ -15,7 +15,8 @@ return new class extends Migration
     $table->id();
     $table->foreignId('exam_id')->constrained()->cascadeOnDelete();
     $table->text('body');
-    $table->string('type');           
+    $table->string('type');
+    $table->json('options')->nullable();
     $table->text('correct_answer');
     $table->unsignedInteger('points')->default(1);
     $table->timestamps();

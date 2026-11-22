@@ -24,7 +24,7 @@ public function rules(): array
             'required', 'integer', 'min:1',
             Rule::unique('classrooms', 'section')->where('level_id', $this->input('level_id')),
         ],
-        'capacity'    => ['sometimes', 'integer', 'min:1'],
+        'capacity'    => ['required', 'integer', 'min:1'],
         'custom_name' => ['nullable', 'string', 'max:255'],
     ];
 }
