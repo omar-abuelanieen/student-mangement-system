@@ -54,4 +54,11 @@ class ExamPolicy
 
         return TeacherProfile::where('user_id', $user->id)->value('id') === $exam->teacher_profile_id;
     }
+    public function submit(User $user, Exam $exam): bool
+{
+    return $user->hasRole(RoleEnum::Student->value)
+        && StudentProfile::where('user_id', $user->id)
+            ->where('classroom_id', $exam->classroom_id)
+            ->exists();
+}
 }

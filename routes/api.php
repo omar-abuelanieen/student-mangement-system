@@ -15,6 +15,8 @@ use App\Http\Controllers\Api\ClassroomScheduleController;
 use App\Http\Controllers\Api\SchoolCalendarDayController;
 use App\Http\Controllers\Api\AttendanceController;
 use App\Http\Controllers\Api\ExamController;
+use App\Http\Controllers\Api\SubmissionController;
+
 
 
 Route::post('users', [UserController::class, 'store']);
@@ -107,4 +109,16 @@ Route::middleware(['auth:sanctum', 'role:teacher'])->group(function () {
 Route::middleware(['auth:sanctum', 'role:teacher|student|admin|manager'])->group(function () {
     Route::get('exams', [ExamController::class, 'index']);
     Route::get('exams/{exam}', [ExamController::class, 'show']);
+});
+ Route::middleware(['auth:sanctum', 'role:student'])->group(function () {
+    Route::post('exams/{exam}/submissions', [SubmissionController::class, 'store']);
+});
+Route::middleware(['auth:sanctum', 'role:teacher|admin|manager'])->group(function () {
+    Route::get('exams/{exam}/submissions', [SubmissionController::class, 'index']);
+});
+Route::middleware(['auth:sanctum','role:teacher'])->group(function(){
+    Route::put('submissions/{submission}/grade', [SubmissionController::class, 'grade']);
+});
+Route::middleware(['auth:sanctum', 'role:student|guardian|teacher|admin|manager'])->group(function () {
+    Route::get('submissions/{submission}', [SubmissionController::class, 'show']);
 });
