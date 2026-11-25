@@ -9,22 +9,23 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up(): void
-    {
-       Schema::create('payments', function (Blueprint $table) {
-    $table->id();
-    $table->foreignId('guardian_profile_id')->constrained()->cascadeOnDelete();
-    $table->foreignId('student_profile_id')->constrained()->cascadeOnDelete();
-    $table->decimal('amount', 10, 2);
-    $table->string('currency', 3)->default('EGP');
-    $table->string('gateway');        // PaymentGatewayEnum: stripe, cash
-    $table->string('status');         // PaymentStatusEnum
-    $table->json('gateway_data')->nullable();   // Custom Cast -> DTO
-    $table->timestamp('paid_at')->nullable();
-    $table->timestamp('refunded_at')->nullable();
-    $table->timestamps();
-});
-    }
+   public function up(): void
+{
+    Schema::create('payments', function (Blueprint $table) {
+        $table->id();
+        $table->foreignId('invoice_id')->constrained()->cascadeOnDelete();
+        $table->string('gateway')->default('paymob');
+        $table->string('reference')->unique();
+        $table->string('gateway_transaction_id')->nullable()->unique();
+        $table->unsignedInteger('amount_cents');
+        $table->string('status')->default('pending');
+        $table->json('raw_payload')->nullable();
+        $table->timestamp('paid_at')->nullable();
+        $table->timestamp('receipt_sent_at')->nullable();
+        $table->timestamps();
+    });
+}
+    
 
     /**
      * Reverse the migrations.

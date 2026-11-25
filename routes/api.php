@@ -16,6 +16,11 @@ use App\Http\Controllers\Api\SchoolCalendarDayController;
 use App\Http\Controllers\Api\AttendanceController;
 use App\Http\Controllers\Api\ExamController;
 use App\Http\Controllers\Api\SubmissionController;
+use App\Http\Controllers\Api\GuardianController;
+use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\PaymobWebhookController;
+use App\Http\Controllers\InvoiceController;
+
 
 
 
@@ -121,4 +126,28 @@ Route::middleware(['auth:sanctum','role:teacher'])->group(function(){
 });
 Route::middleware(['auth:sanctum', 'role:student|guardian|teacher|admin|manager'])->group(function () {
     Route::get('submissions/{submission}', [SubmissionController::class, 'show']);
+});
+Route::middleware(['auth:sanctum', 'role:guardian|admin|manager'])->group(function () {
+    Route::get('guardians', [GuardianController::class, 'index']);
+    Route::get('guardians/{guardian}', [GuardianController::class, 'show']);
+    Route::post('guardians/{guardian}/students', [GuardianController::class, 'syncStudents']);
+});
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('invoices/{invoice}/pay', [PaymentController::class, 'store']);
+});
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('payments/{payment}', [PaymentController::class, 'show']);
+});
+Route::post('webhooks/paymob', PaymobWebhookController::class);
+
+
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('invoices', [InvoiceController::class, 'index']);
+    Route::get('invoices/{invoice}', [InvoiceController::class, 'show']);
+
+    Route::middleware('role:admin')->group(function () {
+        Route::post('invoices', [InvoiceController::class, 'store']);
+        Route::post('invoices/{invoice}/cancel', [InvoiceController::class, 'cancel']);
+    });
 });

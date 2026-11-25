@@ -33,4 +33,10 @@ class StudentProfile extends Model
     {
         return $this->hasMany(ExamSubmission::class);
     }
+    public function guardians()
+    {
+        return $this->belongsToMany(GuardianProfile::class, 'guardian_student', 'student_profile_id', 'guardian_profile_id')
+            ->withPivot('relationship')
+            ->withTimestamps();
+    }
 }

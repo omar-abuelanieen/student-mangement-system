@@ -29,7 +29,6 @@ class AttendanceService
         try {
             Attendance::insert($rows->all());
         } catch (UniqueConstraintViolationException) {
-            // خط الدفاع الأخير: طلبين وصلوا في نفس اللحظة
             throw ValidationException::withMessages([
                 'records' => ['Attendance was already recorded for one or more of these students on this date.'],
             ]);

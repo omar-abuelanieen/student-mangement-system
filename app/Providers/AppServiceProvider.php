@@ -4,6 +4,12 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Database\Eloquent\Model;
+use App\Services\Payments\Contracts\PaymentGateway;
+ use App\Services\Payments\PaymobGateway;
+use App\Models\Invoice;
+use App\Policies\InvoicePolicy;
+use Illuminate\Support\Facades\Gate;
+
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -11,7 +17,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+    $this->app->bind(PaymentGateway::class, PaymobGateway::class);
     }
 
     /**
@@ -20,6 +26,8 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
     Model::preventLazyLoading(! app()->isProduction());
-
+    Gate::policy(Invoice::class, InvoicePolicy::class);
     }
+
 }
+
